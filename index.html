@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><title>Cuestionario Bases de Datos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#050505;--c:#181818;--b:#2b2b2b;--t:#f2f2f2;--m:#8a8a8a;--ok:#4ade80;--okb:#14281c;--no:#f87171;--nob:#2e1d1f;--bl:#5b9bf0;--blb:#1b2638;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;background:var(--bg);color:var(--t);font-family:system-ui,"Segoe UI",sans-serif;line-height:1.5}
+main{max-width:720px;width:100%;margin:auto;padding:24px 16px}
+.card{background:var(--c);border:1px solid var(--b);border-radius:12px;padding:30px 32px}
+.mono{font-family:ui-monospace,Consolas,monospace;font-size:.82rem;letter-spacing:.04em;color:var(--m)}
+hr{border:0;border-top:1px solid var(--b);margin:16px 0 22px}
+.chip{display:inline-block;font-family:ui-monospace,Consolas,monospace;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;background:var(--blb);color:var(--bl);padding:6px 10px;border-radius:5px;margin-bottom:16px}
+h1{font-size:1.35rem;margin:0 0 6px}h2{font-size:1.08rem;font-weight:400;margin:0 0 20px;line-height:1.5;text-align:center}.chipw{text-align:center}.mono.c{text-align:center}.inp{display:block;width:100%;margin:10px 0;padding:14px 16px;background:#0d0d0d;border:1px solid #ddd;border-radius:8px;color:var(--t);font:1rem ui-monospace,Consolas,monospace;text-align:center;outline:0}.inp.ok{border-color:var(--ok);color:var(--ok)}.inp.no{border-color:var(--no);color:var(--no)}small{color:var(--m)}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;margin:10px 0;padding:13px 16px;background:#141414;border:1px solid var(--b);border-radius:8px;color:var(--t);font:.92rem Georgia,"Times New Roman",serif;cursor:pointer}
+.opt .r{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid #444}
+.opt.sel{border-color:#ddd;background:#1a1a1a}.opt.sel .r{border:6px solid #fff}
+.opt.ok{color:var(--ok)}.opt.no{color:var(--no)}.opt.ok .r{border:6px solid var(--ok)}.opt.no .r{border:6px solid var(--no)}
+.opt:disabled{cursor:default}
+.fb{margin-top:20px;padding:16px 18px;border-radius:6px;font-size:.9rem}
+.fb.ok{background:var(--okb);border-left:3px solid var(--ok);color:var(--ok)}.fb.no{background:var(--nob);border-left:3px solid var(--no);color:var(--no)}
+.fb b{color:#fff}.fb i{color:#fff}.fb p{margin:12px 0 0}
+button.bt{font:.9rem Georgia,serif;color:var(--t);background:#000;border:1px solid #ddd;border-radius:6px;padding:10px 20px;cursor:pointer}
+button.bt:disabled{opacity:.35;cursor:not-allowed}button.bt.g{border-color:var(--b);background:#0d0d0d}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;justify-content:center}
+.foot{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:24px}
+label.tp{display:flex;gap:12px;align-items:center;padding:14px;border:1px solid var(--b);border-radius:8px;margin:10px 0;cursor:pointer;font-family:Georgia,serif}
+label.tp input{width:18px;height:18px;accent-color:#fff}
+.big{font-size:3rem;font-weight:700;margin:4px 0}
+.st{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.st div{background:#111;border:1px solid var(--b);border-radius:8px;padding:12px;text-align:center}.st b{display:block;font-size:1.5rem}
+.bar{height:8px;background:#2a2a2a;border-radius:9px;overflow:hidden;margin:6px 0 14px}.bar i{display:block;height:100%;background:var(--ok)}
+.tr{display:flex;justify-content:space-between;font-size:.9rem;font-family:Georgia,serif}
+.rv{background:#111;border:1px solid var(--b);border-left:3px solid var(--no);border-radius:6px;padding:10px 14px;margin:8px 0;font-size:.85rem;font-family:Georgia,serif}
+.rv span{color:var(--ok)}
+.hide{display:none}
+@media(max-width:520px){.card{padding:22px 18px}}
+</style></head><body><main>
+<div id="home" class="card"><div class="mono c">BASES DE DATOS · UNICAES</div><hr>
+<h1 style="text-align:center">Cuestionario de Bases de Datos</h1>
+<p class="mono c" style="margin:0 0 10px">Elige uno o varios temas</p>
+<div id="topics"></div><p id="cnt" class="mono c"></p>
+<div class="row"><button class="bt" id="go">Comenzar (mezclado)</button><button class="bt g" id="goo">En orden</button></div></div>
+<div id="quiz" class="card hide">
+<div class="mono c"><div id="pos"></div><div id="okc"></div></div><hr>
+<div class="chipw"><span class="chip" id="tag"></span></div><h2 id="q"></h2><div id="opts"></div>
+<div id="fb"></div>
+<div class="row"><button class="bt g" id="prev">Anterior</button><button class="bt" id="conf" disabled>Confirmar</button><button class="bt" id="next" disabled>Siguiente</button></div></div>
+<div id="stats" class="card hide"></div>
+<div class="foot hide" id="foot"><button class="bt g" id="bo">↺ En orden</button><button class="bt g" id="bm">↻ Mezclar</button><button class="bt g" id="bs">📊 Puntuación</button><button class="bt g" id="bh">⌂ Inicio</button></div>
+</main>
+<script>
+const T={d:"Docker y Redes",o:"Cubos OLAP y Requisitos",m:"Minería y Análisis Predictivo"};
+// [tema, pregunta, [opciones], índice correcto, retroalimentación]
+const Q=[
+["d","¿Qué virtualiza un contenedor Docker, a diferencia de una máquina virtual?",["Todo el hardware con un SO invitado completo","Solo el espacio de usuario (procesos y librerías), compartiendo el kernel del host","Únicamente la red","Solo el disco duro"],1,"Los contenedores aíslan procesos sobre el kernel compartido; la VM virtualiza hardware completo con su propio SO, por eso es más pesada y lenta."],
+["d","¿Cuál es el tiempo de arranque típico de un contenedor?",["Varios minutos","Milisegundos o un par de segundos","Una hora","Depende del hipervisor"],1,"Un contenedor inicia solo el proceso, no todo un sistema operativo, por eso arranca casi al instante."],
+["d","¿Cuál de estos es un problema de instalar las BD directamente en el SO?",["Falta de memoria RAM siempre","Conflicto de versiones, colisión de puertos y diferencias entre sistemas","No se pueden usar clientes como DBeaver","Las BD no funcionan en Windows"],1,"Ej.: PostgreSQL 14 vs 16, el puerto 5432 ocupado y rutas distintas entre Windows y Linux. Docker da entornos idénticos y desechables."],
+["d","¿Qué es una imagen de Docker?",["Un proceso activo con su propia IP","Una plantilla inmutable de solo lectura de la que nacen los contenedores","Un directorio persistente en el host","Un archivo de red"],1,"La imagen es la receta (como una Clase en POO); no consume CPU ni RAM mientras no se ejecute."],
+["d","Con la analogía de POO, ¿qué es el contenedor?",["La clase","El objeto instanciado en ejecución","El compilador","El paquete npm"],1,"El contenedor es la instancia viva: agrega una capa escribible sobre la imagen. De una imagen puedes crear muchos contenedores independientes."],
+["d","Si ejecutas docker rm sobre un contenedor de PostgreSQL SIN volumen, ¿qué pasa con los datos?",["Se conservan en el host","Se pierden las tablas y registros","Se mueven a Docker Hub","Se respaldan automáticamente"],1,"Sin volumen, los datos viven en la capa escribible del contenedor, que es efímera y desaparece con él."],
+["d","¿Para qué sirve un volumen nombrado, por ejemplo -v pg_datos:/var/lib/postgresql/data?",["Para acelerar la red","Para persistir los datos fuera del ciclo de vida del contenedor","Para construir imágenes","Para exponer puertos"],1,"El volumen conserva la información aunque borres o actualices el contenedor. Regla de oro: el estado de las BD siempre vive en el volumen."],
+["d","En -p 5433:5432, ¿qué significa el primer número?",["Puerto interno del contenedor","Puerto del host (tu PC) por el que te conectas","Versión de PostgreSQL","Número de réplicas"],1,"Formato -p HOST:CONTENEDOR. Te conectas a localhost:5433, y dentro del contenedor PostgreSQL sigue escuchando en 5432."],
+["d","¿Cuál es el puerto estándar de MongoDB?",["5432","3306","27017","4000"],2,"PostgreSQL usa 5432, MySQL 3306, MongoDB 27017 y Nginx 80/443."],
+["d","¿Cuál es el rol de Nginx como proxy inverso?",["Almacenar los datos","Ser el portero único que recibe tráfico en 80/443 y lo enruta, protegiendo las BD","Reemplazar a Docker Compose","Compilar el Dockerfile"],1,"Las BD quedan tras la red interna sin exponer el 5432 a internet; además Nginx aporta terminación SSL y caché de estáticos."],
+["d","¿Qué comando levanta todos los servicios definidos en compose.yaml en segundo plano?",["docker run -a","docker compose up -d","docker build -t","docker ps -q"],1,"docker compose up -d levanta el stack; con --build fuerza a reconstruir las imágenes."],
+["d","¿Cuándo se usan Dockerfile y Compose juntos?",["Nunca, son excluyentes","Cuando tu API se construye con build: ./backend y Compose la une con imágenes oficiales como Postgres y Mongo","Solo para Kubernetes","Solo en producción de Netflix"],1,"Dockerfile = receta de TU app; compose.yaml = el banquete completo. Es el estándar profesional full-stack."],
+["o","¿Qué significa OLAP?",["Online Analytical Processing","Open Language Access Protocol","Operational Local Application Process","Online Archive Planning"],0,"Procesamiento Analítico en Línea: consultas complejas y agregaciones multidimensionales rápidas sin tocar la base transaccional."],
+["o","¿Por qué las consultas pesadas congelaban las cajas registradoras?",["Falta de internet","Los reportes en la BD operacional (OLTP) generan bloqueos (locks) que impiden registrar tickets","MySQL no suma","Faltaba Excel"],1,"OLTP está hecho para cobrar rápido; por eso el análisis se separa en un servidor OLAP independiente."],
+["o","¿Cuál es el flujo correcto de los datos?",["OLAP → ETL → OLTP","OLTP → ETL → OLAP","ETL → OLAP → OLTP","OLTP → OLAP → ETL"],1,"ETL (Extract, Transform, Load) extrae de OLTP, limpia, pre-calcula sumas y carga en el cubo."],
+["o","¿Qué es una dimensión?",["Un valor numérico a sumar","El contexto o eje de análisis: ¿Quién? ¿Dónde? ¿Cuándo? ¿Qué producto?","Una fila de la tabla de hechos","Un tipo de índice"],1,"Las dimensiones dan contexto cualitativo; las métricas (hechos) son los números que se miden."],
+["o","¿Qué operación OLAP fija UNA sola dimensión (ej. Sucursal = 'Santa Ana')?",["Dice","Pivot","Slice","Roll-Up"],2,"Slice (rebanar) fija una dimensión y colapsa el cubo 3D a una matriz 2D. Dice filtra varias dimensiones a la vez."],
+["o","Pasar de ventas del Año → Mes → Día es una operación de:",["Roll-Up","Drill-Down","Pivot","Slice"],1,"Drill-Down profundiza en la jerarquía (zoom in). Roll-Up hace lo inverso: consolida hacia totales mayores."],
+["o","¿Qué hace la operación Pivot?",["Filtra por rangos","Rota los ejes, intercambiando filas por columnas","Suma hasta el total país","Borra una dimensión"],1,"Pivot gira la orientación del reporte para ofrecer otra perspectiva, como girar la mesa."],
+["o","Según Kimball, ¿cuál es el grano ideal?",["El resumen mensual","El más atómico posible (ej. una línea de producto escaneada en el ticket)","El promedio anual","El total del ticket"],1,"Resumir antes de tiempo destruye el detalle e impide responder preguntas futuras por hora, cajero o producto."],
+["o","¿Por qué el saldo bancario es SEMIADITIVO?",["No se suma entre cuentas","Se suma entre cuentas, pero sumarlo a través del tiempo crearía dinero falso","Solo se guarda en dólares","Es un porcentaje"],1,"Las semiaditivas no se suman en el tiempo. Las no aditivas (%, promedios, precio unitario) no se suman nunca."],
+["o","¿Cuál es el orden de los 4 pasos de Kimball para levantar requisitos?",["Dimensiones, hechos, grano, proceso","Proceso de negocio, grano, dimensiones, hechos","Grano, hechos, proceso, dimensiones","Hechos, dimensiones, proceso, grano"],1,"Proceso de negocio → declarar el grano (paso crítico) → dimensiones → hechos y métricas."],
+["o","¿Qué diferencia a Inmon de Kimball?",["Inmon es Bottom-Up con datamarts; Kimball es Top-Down","Inmon propone un DW corporativo normalizado Top-Down; Kimball, datamarts dimensionales Bottom-Up","Son idénticos","Inmon no usa bases de datos"],1,"Inmon: primero el warehouse central en 3FN. Kimball: primero cubos/datamarts temáticos conectados por dimensiones conformadas."],
+["m","¿Cuál es el propósito de la Minería de Datos?",["Almacenar transacciones","Descubrir patrones ocultos en grandes volúmenes de datos","Hacer copias de seguridad","Diseñar interfaces"],1,"Extrae regularidades no programadas manualmente, como que quien compra galletas suele llevar chocolates."],
+["m","¿Cuáles son las 3 fases del proceso de minería de datos del curso?",["Ingesta, Algoritmos, Producción","Diseño, Pruebas, Despliegue","Backup, Restore, Mantenimiento","Consulta, Índice, Caché"],0,"Fase 1 Ingesta (MongoDB), Fase 2 Algoritmos (análisis y extracción), Fase 3 Producción (interpretación y decisión)."],
+["m","¿Es lo mismo un find() o $match que la minería de datos?",["Sí, son equivalentes","No: la consulta busca lo que el programador define; la minería descubre relaciones ocultas","Sí, pero con más datos","No, la minería solo borra datos"],1,"La BD nos dice qué ocurrió; la minería descubre patrones en lo ocurrido."],
+["m","Agrupar clientes en segmentos por similitud SIN etiquetas previas es:",["Clasificación","Clustering (no supervisado)","Regresión","Detección de errores"],1,"El clustering descubre grupos naturales (ej. K-Means). La clasificación es supervisada y usa categorías ya conocidas."],
+["m","¿Qué función detecta que 'quien compra café suele llevar pan dulce'?",["Reglas de asociación","Detección de anomalías","Regresión lineal","Clustering"],0,"Las reglas de asociación modelan co-ocurrencia con las métricas de Soporte y Confianza."],
+["m","Una transferencia de $1,900 a las 3:15 AM desde una IP desconocida, cuando el usuario gasta $5–$35, es un caso de:",["Clustering","Detección de anomalías","Regla de asociación","Regresión"],1,"Es un registro atípico respecto al perfil normal; el sistema puede suspenderlo y pedir autenticación de dos factores."],
+["m","¿Cuáles funciones de minería son descriptivas?",["Solo el modelado predictivo","Agrupamiento, asociación y anomalías","Ninguna","Todas son predictivas"],1,"Las funciones 1–3 explican la estructura de los datos actuales; la función 4 (modelado predictivo) proyecta hacia el futuro."],
+["m","¿Qué técnica sirve para estimar cantidades numéricas continuas, como ventas del próximo sábado?",["Regresión lineal","Regresión logística","Clustering","Reglas de asociación"],0,"La regresión estima valores continuos; la regresión logística estima probabilidades de categorías (ej. ¿cancela o no?)."],
+["m","Una predicción es:",["Una certeza absoluta","Una estimación probabilística basada en datos históricos","Un dato ya ocurrido","Un respaldo de la BD"],1,"No es una certeza determinista: es un valor esperado con un intervalo de confianza."],
+["m","¿Qué significa GIGO?",["Get In, Get Out","Garbage In, Garbage Out: datos de mala calidad generan patrones distorsionados","Graph In, Graph Out","General Input, General Output"],1,"Por eso el preprocesamiento y la limpieza en MongoDB pueden llegar al 70% del esfuerzo del proyecto."],
+["m","¿Qué papel cumple MongoDB en un proyecto de minería?",["Ejecuta K-Means por sí solo","Persiste los datos y los prepara con el Aggregation Pipeline; el algoritmo corre aparte (ej. scikit-learn)","Reemplaza al algoritmo","Solo sirve para gráficos"],1,"MongoDB no agrupa por sí solo: se conecta un algoritmo que procese los datos y devuelva reglas o clústeres que la app consume."],
+["m","¿Qué se hace en la fase de Evaluar del ciclo predictivo?",["Se compara el modelo con datos de prueba que nunca vio (RMSE / R²)","Se recopilan los datos","Se borran los nulos","Se publica el modelo"],0,"Ciclo: recopilar, preparar, entrenar, evaluar y predecir. Evaluar mide si el modelo generaliza."],
+["d","¿Qué comando muestra TODOS los contenedores, incluso los detenidos?",["docker ps","docker ps -a","docker images","docker logs -f"],1,"docker ps solo lista los que corren; con -a aparecen también los detenidos. docker images lista las imágenes descargadas."],
+["d","¿Qué hace docker stop nombre_contenedor?",["Lo borra","Lo detiene sin borrarlo","Borra su imagen","Reconstruye la imagen"],1,"stop solo lo detiene; para borrarlo se usa docker rm (debe estar detenido, o rm -f para forzar)."],
+["d","¿Qué comando elimina una imagen, por ejemplo postgres:16-alpine?",["docker rm","docker rmi","docker stop","docker prune"],1,"docker rmi borra imágenes; docker rm borra contenedores."],
+["d","¿Qué hace la bandera -d en docker run -d?",["Elimina el contenedor al salir","Lo ejecuta en segundo plano (detached)","Descarga la imagen de nuevo","Define el puerto"],1,"-d libera la terminal y deja el contenedor corriendo en segundo plano."],
+["d","¿Cómo reconstruyes la imagen y reinicias los servicios cuando cambias el Dockerfile con Compose?",["docker compose stop","docker compose up -d --build","docker rmi -a","docker pull"],1,"--build fuerza a recompilar la imagen aunque no haya cambiado la versión."],
+["d","¿Qué comando construye una imagen propia desde un Dockerfile?",["docker build -t mi_app:latest .","docker pull mi_app","docker start mi_app","docker logs mi_app"],0,"docker build -t le pone nombre (tag) a la imagen y el punto indica el contexto: la carpeta actual."],
+["d","¿Qué es un Dockerfile?",["Un archivo con instrucciones paso a paso para construir una imagen propia","Un archivo que levanta varios servicios","Un volumen","Un servidor web"],0,"Dockerfile = la receta de cocina de TU app (FROM, WORKDIR, COPY, RUN, CMD)."],
+["d","¿Qué instrucción de un Dockerfile define la imagen base, como node:20-alpine?",["WORKDIR","COPY","FROM","CMD"],2,"FROM indica la imagen sobre la que se construye. WORKDIR fija la carpeta de trabajo y CMD el comando de arranque."],
+["d","¿Cuándo basta con usar solo docker-compose y no un Dockerfile?",["Cuando solo consumes imágenes oficiales listas (Postgres, Mongo, Redis)","Cuando compilas tu propio código","Nunca","Solo con Kubernetes"],0,"Si no hay código propio que empaquetar, Compose con image: es suficiente."],
+["d","¿Qué es Kubernetes (K8s)?",["Un sistema de Google para orquestar contenedores en clústeres de cientos o miles de servidores","Una base de datos NoSQL","Un cliente gráfico de BD","Un tipo de volumen"],0,"Ofrece auto-recuperación y auto-escalado, y lo usan Netflix y Spotify."],
+["d","¿Por qué en el curso usamos Docker Compose y no Kubernetes?",["Porque K8s es de pago","Porque K8s añade una sobrecarga enorme (Pods, Ingress, Helm) innecesaria para laboratorio; Compose es más directo y suficiente","Porque Compose escala a miles de nodos","Porque K8s no usa contenedores"],1,"La regla de ingeniería: no uses una grúa industrial si solo necesitas mover una silla."],
+["d","Dos contenedores en la misma red Docker, ¿cómo se comunican entre sí?",["Solo por IP pública","Directamente por su nombre DNS interno (ej. postgres:5432), sin exponer puertos a internet","Necesitan Nginx","No pueden comunicarse"],1,"Por eso la API se conecta a postgres-db y mongo-db sin publicar sus puertos."],
+["d","En el stack del curso, ¿qué contenedor debe exponer puertos al exterior (80/443)?",["PostgreSQL","MongoDB","Nginx (el proxy inverso)","Ninguno"],2,"Nginx es la única entrada pública; las BD quedan en la red privada."],
+["d","Quieres correr dos PostgreSQL en la misma laptop. ¿Qué mapeo es correcto?",["Ambos \"5432:5432\"","\"5432:5432\" y \"5433:5432\"","\"5432:5433\" en ambos","No se puede"],1,"Cambia el puerto del host; el interno sigue siendo 5432 porque lo define la imagen. Dos \"5432:5432\" causan colisión."],
+["d","Un contenedor SIN la sección ports: en compose, ¿quién puede acceder a él?",["Cualquiera en internet","Solo los contenedores de su misma red Docker interna","Nadie, ni la API","Solo el host"],1,"No es inaccesible: está oculto al exterior pero visible dentro de la red, que es justo lo deseado para las BD."],
+["d","¿Qué error cometió la fintech del Reto C?",["Usó volúmenes","Publicó 5432 y 27017 directamente a internet, y un bot robó los datos","Usó Nginx","Usó imágenes oficiales"],1,"Se confundió red Docker interna con exposición pública. La solución: solo Nginx publica 80/443."],
+["d","¿Qué beneficio da la terminación SSL en Nginx?",["Cifra los datos del disco","El certificado HTTPS se configura una sola vez en Nginx sin tocar los contenedores internos","Hace más rápidas las consultas SQL","Evita usar volúmenes"],1,"Los contenedores internos siguen hablando HTTP simple por la red privada."],
+["d","En el Dockerfile multi-stage del Reto D, ¿para qué sirve?",["Para tener más contenedores","Para obtener una imagen final liviana que haga deploys más rápidos","Para usar dos bases de datos","Para exponer más puertos"],1,"La etapa builder instala dependencias y la final copia solo lo necesario."],
+["d","En la arquitectura analítica del curso, ¿qué rol cumple Cube Core?",["Capa semántica con métricas gobernadas y caché analítica (puerto 4000)","Base transaccional","Proxy inverso","Gestor de volúmenes"],0,"Flujo: Fuentes → ETL → DW PostgreSQL (estrella) → Cube Core → Nginx y Dashboard."],
+["d","¿Cuál es la \"Regla de Oro\" de las BD en Docker?",["Los contenedores no deben destruirse nunca","Los contenedores se pueden destruir o actualizar en cualquier momento; el estado vive en el volumen","Usar siempre la imagen latest","Exponer todos los puertos"],1,"Contenedores desechables + datos en volúmenes."],
+["o","¿Qué es un Data Warehouse?",["Un repositorio central que integra y almacena datos históricos de múltiples sistemas","Una hoja de cálculo","Una base solo de cajeros","Un tipo de índice"],0,"Integra, limpia y guarda históricos para análisis estratégico unificado."],
+["o","¿Qué es un Datamart?",["Un subconjunto temático del warehouse enfocado en un área (Mercadeo, Finanzas…)","El warehouse completo","Una tabla de hechos","Una copia de OLTP"],0,"Ej.: base analítica exclusiva de Mercadeo para evaluar promociones."],
+["o","¿Qué almacena ROLAP?",["Matrices binarias precalculadas","Datos en tablas de motores relacionales (SQL)","Solo texto plano","Solo agregaciones en RAM"],1,"ROLAP = Relational OLAP; ej.: cubo virtual sobre PostgreSQL o MySQL usando vistas y agregaciones SQL."],
+["o","¿Qué caracteriza a MOLAP?",["Guarda datos en matrices multidimensionales precalculadas, con máxima velocidad de lectura","Usa solo tablas relacionales","Es siempre más barato","No usa agregaciones"],0,"Ej.: cubos de Microsoft SSAS cargados en memoria para tableros ejecutivos."],
+["o","¿Qué combina HOLAP?",["MOLAP para agregaciones de alto nivel y ROLAP para el detalle atómico","Dos bases NoSQL","OLTP con ETL","Dos cubos MOLAP"],0,"Híbrido: los resúmenes salen al instante y el ticket del día se consulta en la base relacional."],
+["o","¿Qué es el Esquema en Estrella?",["Una tabla de hechos central conectada directamente a dimensiones desnormalizadas","Una jerarquía de 12 subtablas normalizadas","Una sola tabla plana","Un archivo CSV"],0,"Ej.: Fact_Ventas al centro con Dim_Tiempo, Dim_Producto, Dim_Tienda y Dim_Cliente. Sencillo y rápido con pocos JOIN."],
+["o","¿Qué es una jerarquía en una dimensión?",["Niveles ordenados padre-hijo para navegar de lo general a lo específico (País → Depto → Municipio → Sucursal)","Un permiso de usuario","Una métrica","Un tipo de ETL"],0,"Es la base de las operaciones Drill-Down y Roll-Up."],
+["o","¿Qué es un atributo?",["Una característica descriptiva (texto o fecha) de una dimensión","Un número a sumar","Un tipo de cubo","Una llave foránea"],0,"Ej.: en Dim_Producto: Nombre, Marca, Presentación, Es Perecedero."],
+["o","¿Qué es una métrica (medida)?",["Valor numérico en la tabla de hechos que se suma, promedia o cuenta (¿Cuánto?)","Un eje de análisis","Una jerarquía","Un atributo de texto"],0,"Ej.: monto vendido, unidades vendidas, margen."],
+["o","¿Qué es un hecho?",["El evento cuantificable medible del negocio, núcleo numérico del modelo","Una dimensión","Una jerarquía","Un índice"],0,"Ej.: una compra realizada por un cliente en la caja de Santa Ana."],
+["o","¿Qué es la celda de un cubo?",["La coordenada donde se cruzan las dimensiones y contiene el total ya calculado","Una tabla de dimensión","Un permiso","Una regla ETL"],0,"Ej.: [Café × Santa Ana × Enero] = $12,450."],
+["o","¿Por qué la dimensión Tiempo está en todo cubo?",["Sin tiempo no hay análisis de tendencias, estacionalidad ni comparación interanual","Por costumbre","Porque es la más pequeña","Porque MOLAP lo exige"],0,"Atributos típicos: fin de semana, día festivo, quincena."],
+["o","¿Qué es Dice (subcubo)?",["Filtrar dos o más dimensiones a la vez por rangos o conjuntos","Fijar solo una dimensión","Girar ejes","Sumar hasta el total"],0,"Ej.: (Café y Leche) en (Santa Ana y San Salvador) en (Enero y Febrero)."],
+["o","¿Qué es Roll-Up?",["Subir en la jerarquía agrupando hacia totales mayores (Tienda → Depto → País)","Profundizar al detalle","Girar el reporte","Filtrar una dimensión"],0,"Es la operación inversa del Drill-Down."],
+["o","Pasar del balance de una cuenta al registro atómico de una transferencia de $500 es:",["Slice","Drill-Through","Pivot","Roll-Up"],1,"Drill-Through va de una métrica agregada directo al registro transaccional original."],
+["o","El director pide un cubo \"con todo lo que pasa en el negocio\". ¿Qué haces?",["Hago una consulta de 100 columnas","Aplico los 4 pasos de Kimball: proceso específico, grano y preguntas de decisión antes de construir","Le doy acceso a producción","Exporto todo a Excel"],1,"Primero se identifican las decisiones concretas que el negocio necesita tomar."],
+["o","Un producto cambia de precio o categoría y quieres conservar el historial de ventas. ¿Qué aplicas?",["SCD Tipo 1 (sobrescribir)","SCD Tipo 2 (nueva fila en la dimensión con fechas de vigencia)","Eliminar el registro anterior","Modificar la tabla de hechos"],1,"El SCD Tipo 2 preserva el historial; el Tipo 1 lo pierde."],
+["o","El jefe de agencia pide una alerta al segundo exacto de cada retiro en un cajero. ¿Qué respondes?",["Construyo el cubo ya","OLAP sirve para análisis histórico agregado; las alertas por segundo son del sistema transaccional (OLTP/eventos)","Mando un PDF semanal","Rechazo sin explicar"],1,"Expectativas claras: OLAP no es tiempo real."],
+["o","¿Cuál es el grano del cubo de Banco Agrícola (Fact_Balance_Diario)?",["La foto del saldo de una cuenta al cierre del día","Un cliente nuevo","La dirección de una agencia","El balance total del país"],0,"Por eso el saldo al cierre es semiaditivo: no se suma a través de los días."],
+["o","La Tasa de Morosidad (%) se calcula correctamente como:",["Sumando las tasas de cada agencia","SUM(saldo en mora) / SUM(cartera colocada)","Promediando los saldos","Multiplicando por 7"],1,"Las métricas no aditivas (porcentajes, promedios) se recalculan desde sus componentes aditivos; nunca se suman."],
+["o","El Margen % de un producto es una métrica:",["Aditiva","No aditiva: se recalcula como SUM(margen $) / SUM(venta $)","Semiaditiva","Una dimensión"],1,"Sumar 15% + 20% es un disparate matemático."],
+["o","Costo de medicamentos o Días de Estancia en un hospital son métricas:",["Aditivas: se suman en todas las dimensiones","Semiaditivas","No aditivas","Textuales"],0,"En cambio, Camas Ocupadas al corte es semiaditiva: se suma por servicio pero no a lo largo de los días."],
+["o","La clasificación CIE-10 (Capítulo → Categoría → Subcategoría) es:",["Una jerarquía natural de la dimensión Diagnóstico","Una métrica","Una tabla de hechos","Un permiso"],0,"Permite hacer Drill-Down por especialidad o enfermedad."],
+["o","Para proteger la confidencialidad de pacientes en el cubo se debe:",["Publicar nombres y DUI","Anonimizar los datos y usar llaves sustitutas (Surrogate Keys)","Dar acceso a todos","Borrar los hechos"],1,"Se cumple la normativa de salud sin perder capacidad analítica."],
+["o","¿Qué ventaja da el cubo con la capa semántica?",["El gerente usa Sucursal, Producto y Fecha en lugar de tablas crípticas, con autoservicio sin pedir a TI","Menos servidores","Elimina el ETL","Elimina OLTP"],0,"Traduce códigos como tbl_fac_dtl_01 a dimensiones y métricas de negocio."],
+["o","¿Qué problema resuelve la \"Única Fuente de Verdad\" del cubo?",["Que los reportes de cada jefe den cifras distintas ($50k vs $42k)","La falta de memoria","Los puertos ocupados","El tamaño de las imágenes"],0,"Centraliza fórmulas y filtros oficiales: 100% de conciliación."],
+["o","¿Qué pasa si la tabla de hechos solo guarda el total del ticket y omite los productos?",["Nada","Se destruye la capacidad de Drill-Down por producto, marca y margen por artículo","Se pierde la fecha","Se vuelve NoSQL"],1,"Es el error de un grano demasiado grueso."],
+["o","¿Qué usaremos en MongoDB para construir cubos (Práctica 10)?",["$group y $bucket del Aggregation Framework, y vistas materializadas","Solo find()","Dockerfile","K-Means"],0,"Colecciones precalculadas para responder en milisegundos."],
+["o","¿Cómo se ve afectada la velocidad con y sin cubo?",["Sin cubo 45 s o más; con cubo menos de 250 ms","Sin cubo 1 ms; con cubo 45 s","No cambia","Sin cubo es más rápido"],0,"El ETL nocturno pre-agrega las sumas, y al consultar solo se lee la celda."],
+["o","Para decenas de millones de movimientos anuales que escalen a petabytes, ¿qué conviene?",["MOLAP en un archivo local","ROLAP o DW en la nube con almacenamiento columnar (Snowflake, BigQuery, ClickHouse)","Access","Un bloc de notas"],1,"Alto rendimiento y escalabilidad masiva."],
+["m","¿Qué es un patrón en minería de datos?",["Una regularidad consistente descubierta en los datos que no fue programada manualmente","Una tabla","Un esquema de MongoDB","Un tipo de índice"],0,"Ej.: los compradores de galletas suelen incluir chocolates."],
+["m","¿Qué se hace en la Fase 1 (Ingesta)?",["Captura y almacenamiento sistemático de transacciones en un repositorio persistente","Entrenar el modelo","Tomar la decisión final","Evaluar R²"],0,"En MongoDB: documentos BSON con arrays anidados (items[]), sin JOINs ni migraciones rígidas."],
+["m","¿Qué se hace en la Fase 2 (Algoritmos)?",["Correlación, soporte y afinidad (Apriori) sobre datos preparados con el pipeline de agregación","Solo guardar datos","Solo publicar","Crear el Dockerfile"],0,"El pipeline usa $match, $unwind, $group y $project; luego mlxtend o scikit-learn calculan soporte y confianza."],
+["m","¿Qué se hace en la Fase 3 (Producción)?",["Convertir el patrón en una acción concreta (ej. guardar reglas y servir recomendaciones en tiempo real)","Borrar los datos","Instalar Docker","Crear dimensiones"],0,"Ej.: reglas_recomendacion guardadas en MongoDB y consultadas con findOne por la API de checkout."],
+["m","¿Para qué sirve un índice multikey como createIndex({'items.sku':1})?",["Buscar canastas por SKU en milisegundos dentro de arrays","Cifrar datos","Hacer backups","Crear clústeres"],0,"Prepara las colecciones de transacciones para la minería."],
+["m","¿Qué hace la minería con la ola de calor (+40% de bebidas frías sobre 30 °C)?",["Descubre una correlación y permite una acción: reponer inventario 48 h antes","Solo guarda el ticket","Borra los registros","Cambia el esquema"],0,"Datos sintéticos ilustrativos; se modela correlación sin asumir causalidad única."],
+["m","Netflix y Spotify usan minería principalmente para:",["Recomendación personalizada y retención","Fraude","Diagnóstico clínico","Telemetría"],0,"Analizan historiales de reproducción y permanencia. Bancos: fraude. Hospitales: efectividad de terapias. Videojuegos y apps: anomalías de ejecución."],
+["m","¿Cuáles son las 4 funciones principales de la minería?",["Agrupamiento, reglas de asociación, detección de anomalías y modelado predictivo","Insertar, leer, actualizar y borrar","Slice, dice, pivot y drill","Build, run, stop y rm"],0,"Las tres primeras son descriptivas; la cuarta es predictiva."],
+["m","¿Qué mide el Soporte en reglas de asociación?",["Qué tan frecuente es la combinación en el total de transacciones","La probabilidad condicional de comprar B dado A","El tiempo de respuesta","El tamaño del índice"],0,"La Confianza es la probabilidad condicional (ej. Galletas → Leche, 85%). Ambas descartan coincidencias aleatorias."],
+["m","Ejemplo clásico de Clustering en una tienda de videojuegos:",["Segmentar jugadores en RPG, Competitivo y Estrategia","Estimar ventas del sábado","Detectar compra a las 4 AM","Calcular la confianza"],0,"Se usa K-Means (K=3) y MongoDB guarda el cluster_id para personalizar."],
+["m","¿Por qué se llama Clasificación a la técnica supervisada?",["Porque necesita datos etiquetados con respuestas conocidas (ej. Spam / No Spam)","Porque no necesita datos","Porque agrupa sin etiquetas","Porque solo usa números"],0,"En el clustering nadie define las categorías de antemano; en la clasificación sí."],
+["m","Aprobar o denegar un crédito es un problema de:",["Clasificación (variable categórica)","Regresión","Clustering","Roll-Up"],0,"Salida discreta. ¿Cuánto venderá? o ¿cuánto tardará? sería regresión."],
+["m","¿Cuánto tardará una entrega logística, en minutos? Es un problema de:",["Regresión (variable continua)","Clasificación","Anomalías","Asociación"],0,"Si la respuesta es una cuantía numérica, se usa regresión."],
+["m","¿Qué algoritmo estima probabilidades de pertenecer a una categoría (¿cancela?)?",["Regresión logística","Regresión lineal","K-Means","Apriori"],0,"A pesar del nombre, es de clasificación."],
+["m","¿Qué ventaja tienen los árboles de decisión?",["Reglas lógicas jerárquicas explicables (If/Then)","Son siempre 100% exactos","No necesitan datos","Solo sirven para texto"],0,"Random Forest es un ensamble de árboles que evita el sobreajuste."],
+["m","Un modelo con 100% de exactitud casi siempre sufre de:",["Sobreajuste (overfitting): memorizó el ruido y fallará con datos nuevos","Falta de datos","Model drift","Anomalías"],0,"Los modelos reales operan con márgenes (88%, 92%). Se prefiere un 89% que generalice."],
+["m","¿Qué es el Model Drift?",["La pérdida de precisión del modelo cuando cambian los hábitos con el tiempo","Un error de sintaxis","Un tipo de volumen","Una dimensión"],0,"Solución: pipelines de reentrenamiento periódico con datos recientes de MongoDB."],
+["m","¿Dónde se ejecuta el modelo predictivo en producción?",["En un microservicio en un contenedor Docker (ej. FastAPI) que consulta MongoDB y escribe la probabilidad","En una hoja de Excel","Dentro del navegador del cliente","En el volumen de Postgres"],0,"Ej.: evaluación de riesgo antes de autorizar el débito de una tarjeta."],
+["m","¿Cuántos datos hacen confiable a la minería?",["Muestras representativas: con 50 registros las coincidencias suelen ser ruido; con cientos de miles hay soporte robusto","Con 10 basta","No importa","Siempre exactamente 1,000"],0,"Por eso conecta con colecciones de decenas o cientos de miles de documentos."],
+["m","¿Qué diferencia a la minería descriptiva del análisis predictivo?",["La descriptiva explica el pasado; la predictiva calcula la probabilidad de lo que ocurrirá","Son lo mismo","La descriptiva usa el futuro","La predictiva solo usa SQL"],0,"Ej.: 'abandono 78% el año pasado' (descriptivo) vs. 'este cliente tiene 82% de probabilidad de abandonar en 15 días' (predictivo)."],
+["m","¿Cuáles son las 5 fases del ciclo de aprendizaje predictivo?",["Recopilar, preparar, entrenar, evaluar y predecir","Insertar, leer, borrar, build y run","Slice, dice, roll, drill y pivot","Ingesta, ETL, DW, Cube y Nginx"],0,"Preparar incluye tratar nulos, filtrar ruido y seleccionar variables."],
+["m","¿Qué predice cada ejemplo de uso predictivo: ventas, churn y fallos de equipos?",["Demanda futura, abandono de clientes y riesgo de avería","Solo precios","Solo errores SQL","Solo accesos"],0,"El fallo de equipos usa telemetría de temperatura, vibraciones y ciclos de uso."],
+["m","¿Qué se hace con el pipeline de MongoDB antes del modelo?",["Resumir ventas por día, calcular promedios y preparar la matriz de características","Borrar la BD","Crear contenedores","Cambiar puertos"],0,"Luego el modelo se entrena en Python (scikit-learn) y el frontend consume la inferencia."]
+];
+const DIST={
+"¿Qué virtualiza un contenedor":["El hardware completo mediante un hipervisor, con un kernel propio por contenedor","Solo la CPU y la memoria, mientras el sistema de archivos queda compartido con el host","La red y los controladores, pero cada contenedor arranca su propio SO invitado"],
+"¿Cuál es el tiempo de arranque":["Entre 10 y 30 segundos, porque debe iniciar el demonio del SO","Unos 2 o 3 minutos mientras carga el hipervisor","Depende de la RAM reservada, normalmente unos 60 segundos"],
+"¿Cuál de estos es un problema":["Imposibilidad de usar más de un motor de BD en la misma máquina física","Pérdida de integridad referencial al instalar PostgreSQL en Windows","Licencias de pago obligatorias para ejecutar PostgreSQL 16 sin contenedores"],
+"¿Qué es una imagen de Docker":["Un contenedor detenido que conserva su capa escribible y su IP privada","Un directorio del host montado dentro del contenedor para guardar datos","Una instantánea de la máquina virtual completa con su SO invitado"],
+"Con la analogía de POO":["El constructor que define los atributos de la clase","La interfaz que declara los métodos que implementa la imagen","El paquete que agrupa varias clases en Docker Hub"],
+"Si ejecutas docker rm":["Los datos se conservan porque Docker los copia a la imagen al borrar","Se conservan solo los datos confirmados (COMMIT) y se pierden los demás","Se conservan en la capa de solo lectura de la imagen y reaparecen en el siguiente contenedor"],
+"¿Para qué sirve un volumen":["Para limitar la RAM que puede consumir el contenedor","Para compartir la red del host y evitar el mapeo de puertos","Para guardar una copia comprimida de la imagen y acelerar el siguiente docker pull"],
+"En -p 5433:5432":["Puerto interno donde escucha PostgreSQL dentro del contenedor","Puerto de la red privada de Docker asignado automáticamente por Compose","Puerto de Nginx que reenvía hacia la base de datos"],
+"¿Cuál es el puerto estándar de MongoDB":["6379","1433","28017"],
+"¿Cuál es el rol de Nginx":["Orquestar varios contenedores y definir sus dependencias en un solo archivo","Persistir los datos de las BD en volúmenes y respaldarlos cada noche","Construir las imágenes de la API a partir del Dockerfile antes de desplegarlas"],
+"¿Qué comando levanta todos":["docker compose start --all","docker run -d compose.yaml","docker compose build -d"],
+"¿Cuándo se usan Dockerfile y Compose juntos":["Cuando necesitas reemplazar las imágenes oficiales de Postgres por una versión compilada a mano","Solo cuando el despliegue se hace en un clúster de Kubernetes con varios nodos","Cuando quieres que Compose genere automáticamente el Dockerfile a partir del código fuente"],
+"¿Qué significa OLAP":["Operational Logical Aggregation Process","Online Application Layer Protocol","Object-Linked Analytical Processing"],
+"¿Por qué las consultas pesadas":["El motor MySQL no soporta funciones de agregación como SUM y GROUP BY","Las cajas se quedaban sin conexión porque el reporte saturaba el ancho de banda de la sucursal","Las tablas dimensionales crecían tanto que el ETL nocturno las bloqueaba durante el día"],
+"¿Cuál es el flujo correcto":["OLTP → OLAP → ETL","ETL → OLTP → OLAP","OLAP → ETL → OLTP"],
+"¿Qué es una dimensión":["El valor numérico que se suma o promedia en la tabla de hechos","La coordenada pre-sumada donde se cruzan todos los ejes del cubo","El nivel de detalle que representa una fila de la tabla de hechos"],
+"¿Qué operación OLAP fija":["Dice","Pivot","Drill-Through"],
+"Pasar de ventas del Año":["Roll-Up","Drill-Through","Slice"],
+"¿Qué hace la operación Pivot":["Fija una dimensión y colapsa el cubo 3D a una matriz 2D","Asciende en la jerarquía agrupando datos hacia un total mayor","Salta de un valor agregado al registro atómico original"],
+"Según Kimball, ¿cuál es el grano":["El resumen diario por sucursal, para reducir el tamaño de la tabla de hechos","El total del ticket, porque coincide con la unidad de cobro en caja","El promedio mensual por producto, que es lo que consulta el gerente"],
+"¿Por qué el saldo bancario":["No se puede sumar entre cuentas porque pertenecen a clientes distintos","Es un porcentaje, y los porcentajes no pueden sumarse en ninguna dimensión","Solo puede sumarse a través del tiempo, nunca entre clientes"],
+"¿Cuál es el orden de los 4 pasos":["Dimensiones, proceso de negocio, grano, hechos","Proceso de negocio, dimensiones, hechos, grano","Grano, proceso de negocio, hechos, dimensiones"],
+"¿Qué diferencia a Inmon":["Inmon propone datamarts dimensionales Bottom-Up; Kimball, un DW normalizado Top-Down","Ambos son Top-Down, pero Inmon usa esquema estrella y Kimball copo de nieve","Inmon trabaja solo con MOLAP y Kimball solo con ROLAP"],
+"¿Cuál es el propósito de la Minería":["Registrar con integridad ACID cada transacción ocurrida en el negocio","Pre-calcular sumas por dimensión para responder reportes en milisegundos","Replicar los datos transaccionales a un servidor analítico independiente"],
+"¿Cuáles son las 3 fases":["Extracción, Transformación, Carga","Ingesta, Modelado, Validación","Recopilación, Entrenamiento, Evaluación"],
+"¿Es lo mismo un find()":["Sí: ambos recuperan documentos, la minería solo lo hace con más volumen","Sí: $match es la técnica de minería para encontrar clientes frecuentes","No: la minería solo funciona sobre bases relacionales con JOIN"],
+"Agrupar clientes en segmentos":["Clasificación (supervisada)","Regresión logística","Reglas de asociación"],
+"¿Qué función detecta que":["Clustering","Detección de anomalías","Regresión lineal"],
+"Una transferencia de $1,900":["Reglas de asociación","Clasificación supervisada","Regresión lineal"],
+"¿Cuáles funciones de minería son descriptivas":["Solo agrupamiento y asociación; las anomalías son predictivas","Agrupamiento y modelado predictivo","Asociación, anomalías y modelado predictivo"],
+"¿Qué técnica sirve para estimar cantidades":["Regresión logística","K-Means","Reglas de asociación (Apriori)"],
+"Una predicción es":["Una certeza determinista una vez que el modelo supera el 90% de exactitud","Un patrón descriptivo ya ocurrido en el intervalo observado","Una regla de asociación con confianza superior al 85%"],
+"¿Qué significa GIGO":["Grid In, Grid Out: la estructura de entrada define la tabla de salida","Group In, Group Out: lo que se agrupa antes es lo que se obtiene después","Get In, Go Out: los datos deben salir por el mismo canal en que entran"],
+"¿Qué papel cumple MongoDB":["Ejecuta K-Means internamente mediante $group y devuelve los clústeres","Entrena el modelo predictivo con su motor nativo y lo sirve a la API","Solo almacena los resultados finales; el preprocesamiento se hace en Python"],
+"¿Qué se hace en la fase de Evaluar":["Se tratan los nulos y se seleccionan las variables más correlacionadas","El algoritmo aprende las relaciones matemáticas ocultas","Se aplica el modelo a registros nuevos para apoyar decisiones"],
+"¿Qué comando muestra TODOS":["docker images -a","docker ps -q","docker container prune"],
+"¿Qué hace docker stop":["Lo detiene y borra su capa escribible, conservando el volumen","Lo pausa en memoria sin liberar CPU","Lo detiene y elimina la imagen asociada"],
+"¿Qué comando elimina una imagen":["docker rm -i","docker image stop","docker system rm"],
+"¿Qué hace la bandera -d":["Descarga la imagen aunque ya exista localmente","Elimina el contenedor automáticamente cuando termina","Lo ejecuta en modo depuración con logs detallados"],
+"¿Cómo reconstruyes la imagen":["docker compose restart --build","docker compose up -d --force-recreate","docker compose pull -d"],
+"¿Qué comando construye una imagen":["docker pull -t mi_app:latest .","docker create mi_app:latest ./Dockerfile","docker compose build mi_app:latest"],
+"¿Qué es un Dockerfile":["Un archivo YAML que define varios servicios, redes y volúmenes","Un registro público donde se publican y descargan imágenes","Un script que arranca los contenedores según sus dependencias"],
+"¿Qué instrucción de un Dockerfile":["RUN","CMD","COPY"],
+"¿Cuándo basta con usar solo":["Cuando necesitas instalar dependencias de tu propio código con npm install","Cuando la imagen debe compilarse desde un repositorio privado","Cuando quieres una imagen final multi-stage más liviana"],
+"¿Qué es Kubernetes":["Una herramienta de Docker Inc. para definir varios contenedores en un YAML local","Un servidor web ligero usado como proxy inverso en los puertos 80/443","Un registro de imágenes como Docker Hub pero para entornos empresariales"],
+"¿Por qué en el curso usamos Docker Compose":["Porque Kubernetes no soporta bases de datos como PostgreSQL ni MongoDB","Porque Compose escala automáticamente a miles de nodos, igual que K8s","Porque Kubernetes solo funciona en Linux y los laboratorios usan Windows"],
+"Dos contenedores en la misma red":["Solo mediante la IP del host y el puerto publicado con -p","A través de Nginx, que reenvía el tráfico entre contenedores","Mediante variables de entorno sincronizadas por el volumen compartido"],
+"En el stack del curso, ¿qué contenedor":["PostgreSQL, para que DBeaver pueda conectarse siempre","La API, porque necesita recibir las peticiones del dashboard","MongoDB, solo con el puerto 27017"],
+"Quieres correr dos PostgreSQL":["\"5432:5432\" y \"5432:5433\"","\"5433:5433\" en ambos, cambiando el puerto interno","\"5432:5432\" en ambos, usando redes distintas"],
+"Un contenedor SIN la sección":["Nadie: sin ports el contenedor queda aislado incluso de la red interna","Cualquier cliente del host usando localhost y el puerto por defecto","Solo el contenedor de Nginx, que es el único autorizado"],
+"¿Qué error cometió la fintech":["Colocó Nginx delante de las bases de datos sin certificado SSL","No definió volúmenes y perdió los datos al reiniciar el contenedor","Usó imágenes oficiales sin fijar la versión (tag latest)"],
+"¿Qué beneficio da la terminación SSL":["Cifra automáticamente los datos almacenados en los volúmenes","Evita que haya que exponer el puerto 80 al exterior","Permite que PostgreSQL y MongoDB acepten conexiones directas desde internet de forma segura"],
+"En el Dockerfile multi-stage":["Para ejecutar varias instancias de la API detrás de Nginx","Para separar la base de datos del backend en dos contenedores","Para cifrar las dependencias durante la fase de build"],
+"En la arquitectura analítica del curso":["Data Warehouse con esquema estrella en PostgreSQL (puerto 5432)","Proceso ETL que homologa códigos y limpia datos de las fuentes","Proxy inverso que sirve el dashboard en los puertos 80/443"],
+"¿Cuál es la \"Regla de Oro\"":["Los contenedores deben ser inmutables y nunca recrearse una vez que contienen datos","El estado de la BD vive en la capa escribible del contenedor para máximo rendimiento","Cada base de datos debe exponer su puerto estándar para facilitar el respaldo"],
+"¿Qué es un Data Warehouse":["Un subconjunto temático enfocado en un departamento específico del negocio","Una base transaccional optimizada para cobros rápidos con propiedades ACID","Una matriz binaria precalculada que se carga en memoria RAM"],
+"¿Qué es un Datamart":["Un repositorio corporativo que integra todos los sistemas operacionales","Una tabla de hechos con llaves foráneas hacia cada dimensión","Una copia de la base transaccional para respaldo nocturno"],
+"¿Qué almacena ROLAP":["Matrices multidimensionales propietarias precalculadas","Agregaciones en memoria RAM con detalle en archivos planos","Documentos JSON en colecciones NoSQL"],
+"¿Qué caracteriza a MOLAP":["Guarda los datos en tablas relacionales y calcula agregaciones con SQL en cada consulta","Combina agregaciones en memoria y detalle relacional según el nivel consultado","Almacena documentos flexibles sin esquema, ideal para logs y auditoría"],
+"¿Qué combina HOLAP":["ROLAP para agregaciones de alto nivel y MOLAP para el detalle atómico","OLTP para el detalle y OLAP para los resúmenes anuales","Dos cubos MOLAP replicados en servidores distintos"],
+"¿Qué es el Esquema en Estrella":["Una tabla de dimensión central rodeada de varias tablas de hechos normalizadas","Dimensiones normalizadas en varios niveles de subtablas (3FN estricta)","Una sola tabla plana con todas las columnas de hechos y dimensiones"],
+"¿Qué es una jerarquía":["Un conjunto de permisos que define qué dimensiones puede ver cada rol","El orden en que el ETL carga las tablas de hechos y de dimensión","La relación entre una tabla de hechos y sus llaves foráneas"],
+"¿Qué es un atributo":["Una columna numérica de la tabla de hechos que se suma","Cada nivel de una jerarquía como País o Departamento","La llave foránea que une el hecho con la dimensión"],
+"¿Qué es una métrica":["Característica descriptiva de una dimensión que sirve para filtrar","Eje de análisis que responde ¿Quién? ¿Dónde? ¿Cuándo?","Nivel de detalle que representa una fila de la tabla de hechos"],
+"¿Qué es un hecho":["El contexto cualitativo bajo el cual se analizan las métricas","El nivel de detalle que representa una fila de la tabla","El resumen pre-sumado que el ETL carga cada noche"],
+"¿Qué es la celda":["El registro atómico de la tabla de hechos antes de agregarse","Cada atributo descriptivo de la tabla de dimensión","El nivel más bajo de una jerarquía como Sucursal o Día"],
+"¿Por qué la dimensión Tiempo":["Es la única dimensión que MOLAP permite precalcular","Porque la tabla de hechos siempre almacena la marca de tiempo del ETL","Porque reduce el tamaño del cubo al comprimir las fechas"],
+"¿Qué es Dice":["Fijar una sola dimensión y obtener una matriz 2D","Intercambiar filas por columnas en el reporte","Agrupar los datos hacia un nivel superior de la jerarquía"],
+"¿Qué es Roll-Up":["Bajar en la jerarquía hacia mayor detalle (Año → Mes → Día)","Pasar de un valor agregado al registro transaccional original","Girar los ejes para ver otra perspectiva del cubo"],
+"Pasar del balance":["Roll-Up","Slice","Dice"],
+"El director pide un cubo":["Construyo un cubo con todas las tablas operacionales y dejo que el director filtre","Pido todas las columnas de la BD y las convierto en dimensiones","Creo un Data Warehouse Inmon completo antes de hablar con el negocio"],
+"Un producto cambia de precio":["SCD Tipo 1 (sobrescribir el valor y perder el historial)","SCD Tipo 0 (bloquear cualquier cambio futuro en la dimensión)","Agregar una nueva fila en la tabla de hechos con el precio actualizado"],
+"El jefe de agencia pide una alerta":["Se construye un cubo MOLAP con refresco continuo cada segundo","Se programa el ETL cada minuto y se notifica por correo","Se usa Drill-Through desde el cubo para vigilar cada retiro en vivo"],
+"¿Cuál es el grano del cubo de Banco":["Cada movimiento individual de depósito o retiro en un cajero","El total mensual de remesas recibidas por agencia","Un cliente nuevo con su fecha de apertura de cuenta"],
+"La Tasa de Morosidad":["SUM(tasa de mora de cada agencia)","AVG(tasa de mora de cada agencia)","SUM(cartera colocada) / SUM(saldo en mora)"],
+"El Margen % de un producto":["Aditiva: se suma entre sucursales y a lo largo del tiempo","Semiaditiva: se suma entre productos pero no entre meses","Aditiva en las dimensiones, pero no en el tiempo"],
+"Costo de medicamentos":["Semiaditivas: no se pueden sumar a lo largo del tiempo","No aditivas: deben recalcularse siempre como razón","Ambas semiaditivas porque dependen del servicio"],
+"La clasificación CIE-10":["Una métrica aditiva de la tabla de hechos de admisiones","El grano de la tabla de hechos de pacientes","Un atributo de la dimensión Médico"],
+"Para proteger la confidencialidad":["Mantener nombres y DUI en la tabla de hechos para auditoría","Eliminar la dimensión Paciente y dejar solo los hechos","Cifrar la tabla de hechos y dejar las dimensiones en texto plano"],
+"¿Qué ventaja da el cubo con la capa":["El ETL deja de ser necesario porque la capa semántica lee directo de OLTP","TI genera automáticamente los reportes semanales en Excel","Las consultas se ejecutan sobre las tablas transaccionales con índices adicionales"],
+"¿Qué problema resuelve la":["Que el ETL nocturno falle y deje datos incompletos","Que las consultas analíticas bloqueen las cajas en hora pico","Que el grano sea demasiado grueso para el Drill-Down"],
+"¿Qué pasa si la tabla de hechos solo":["El cubo deja de poder hacer Roll-Up hacia el total país","Se pierde la dimensión Tiempo y con ella la estacionalidad","La tabla de hechos duplica el espacio al guardar totales y detalle"],
+"¿Qué usaremos en MongoDB":["$lookup y $merge para unir colecciones con JOINs relacionales","createIndex multikey y sharding horizontal sobre las ventas","K-Means con scikit-learn leyendo con pymongo"],
+"¿Cómo se ve afectada la velocidad":["Sin cubo 5 s; con cubo 1 s","Sin cubo menos de 250 ms; con cubo 45 s por el ETL","No hay diferencia medible porque ambos leen las mismas filas"],
+"Para decenas de millones":["MOLAP en un único servidor con cubos precalculados en RAM local","Una base transaccional OLTP con más índices y réplicas de lectura","Un datamart en un archivo de Access compartido por la red"],
+"¿Qué es un patrón":["Una regla de negocio que el programador define antes de consultar","Un esquema BSON optimizado para lecturas analíticas","Un índice multikey que acelera las búsquedas de canastas"],
+"¿Qué se hace en la Fase 1":["Ejecución de algoritmos de correlación para calcular soporte y afinidad","Transformación del patrón en una regla servida a la API","Evaluación del modelo con datos de prueba nunca vistos"],
+"¿Qué se hace en la Fase 2":["Captura de transacciones con esquema flexible y arrays anidados","Publicación de reglas indexadas para recomendar en menos de 5 ms","Limpieza de nulos y selección de variables con mayor correlación"],
+"¿Qué se hace en la Fase 3":["Consolidar transacciones y actividad de usuarios sin afectar el rendimiento OLTP","Calcular soporte y confianza de las canastas de compra","Entrenar el algoritmo con datos históricos etiquetados"],
+"¿Para qué sirve un índice multikey":["Cifrar los campos sensibles de cada documento de venta","Particionar la colección entre varios servidores (sharding)","Garantizar que cada SKU aparezca una sola vez en la colección"],
+"¿Qué hace la minería con la ola":["Demuestra que el calor causa por sí solo el aumento de ventas, sin otras variables","Consulta con find() los tickets de bebidas frías y los suma","Reemplaza la base de datos transaccional por un modelo de regresión"],
+"Netflix y Spotify":["Detección de fraude en flujos transaccionales","Telemetría de errores y latencias de aplicaciones","Análisis de variables clínicas para evaluar terapias"],
+"¿Cuáles son las 4 funciones":["Agrupamiento, clasificación, regresión y reglas de asociación","Ingesta, algoritmos, producción y evaluación","Descubrimiento, limpieza, entrenamiento y despliegue"],
+"¿Qué mide el Soporte":["La probabilidad condicional de comprar B habiendo comprado A","La distancia del registro al centroide del cliente","El incremento de probabilidad respecto a comprar B al azar (lift)"],
+"Ejemplo clásico de Clustering":["Estimar cuántos juegos se venderán el próximo sábado","Marcar como sospechosa la compra de 15 consolas a las 4 AM","Sugerir cable HDMI a quien compra una consola"],
+"¿Por qué se llama Clasificación":["Porque descubre grupos naturales sin conocer las categorías de antemano","Porque solo predice valores numéricos continuos","Porque ordena los datos por orden alfabético antes de entrenar"],
+"Aprobar o denegar":["Regresión (variable continua)","Clustering no supervisado","Reglas de asociación"],
+"¿Cuánto tardará una entrega":["Clasificación (variable categórica)","Detección de anomalías","Clustering (K-Means)"],
+"¿Qué algoritmo estima probabilidades":["Regresión lineal","K-Means","Apriori"],
+"¿Qué ventaja tienen los árboles":["Ensamblan miles de árboles para evitar el sobreajuste","Solo sirven para estimar valores numéricos continuos","Aprenden patrones no lineales complejos en series de tiempo"],
+"Un modelo con 100%":["Subajuste (underfitting): el modelo es demasiado simple para los datos","Model drift: los hábitos cambiaron desde el entrenamiento","Falta de datos: la muestra es demasiado pequeña para entrenar"],
+"¿Qué es el Model Drift":["El sobreajuste del modelo a los datos de entrenamiento","La desviación de un registro respecto al centroide del usuario","El crecimiento de la colección que ralentiza el pipeline de agregación"],
+"¿Dónde se ejecuta el modelo":["Dentro del propio MongoDB como función de agregación nativa","En el navegador del cliente, reentrenándose con cada clic","En un cron nocturno que recalcula todas las predicciones y las exporta a Excel"],
+"¿Cuántos datos hacen":["Basta con unas decenas de registros bien limpios para generalizar","Solo importa la variedad de variables, no el volumen de registros","Se necesita exactamente un año de historial sin importar el tamaño"],
+"¿Qué diferencia a la minería descriptiva":["La descriptiva calcula probabilidades futuras; la predictiva resume el pasado","La descriptiva usa datos etiquetados; la predictiva no necesita historial","No hay diferencia: ambas estiman valores futuros con distinta precisión"],
+"¿Cuáles son las 5 fases":["Recopilar, entrenar, preparar, predecir y evaluar","Preparar, recopilar, evaluar, entrenar y desplegar","Ingesta, algoritmos, producción, evaluación y reentrenamiento"],
+"¿Qué predice cada ejemplo":["Segmentos de clientes, canastas frecuentes y registros atípicos","Ventas pasadas, clientes activos y fallos ya ocurridos","Precios de competidores, quejas y costos de mantenimiento"],
+"¿Qué se hace con el pipeline":["Entrenar el regresor y ajustar los pesos del modelo","Predecir las ventas del siguiente sábado con scikit-learn","Clasificar a cada cliente en un clúster con K-Means"]
+};
+const miss=[];
+Q.forEach(q=>{const k=Object.keys(DIST).filter(k=>q[1].startsWith(k));
+ if(k.length==1){q[2]=[q[2][q[3]],...DIST[k[0]]];q[3]=0}else miss.push(q[1])});
+// Preguntas para ESCRIBIR: [tema, pregunta, [respuestas aceptadas], respuesta mostrada, retroalimentación]
+const QT=[
+["d","Escribe el comando para ver TODOS los contenedores, incluso los detenidos.",["docker ps -a","docker ps --all","docker container ls -a"],"docker ps -a","docker ps solo muestra los que corren; la bandera -a incluye los detenidos."],
+["d","Escribe el comando para descargar la imagen postgres:16-alpine desde Docker Hub.",["docker pull postgres:16-alpine"],"docker pull postgres:16-alpine","docker pull baja la imagen; luego docker run crea contenedores a partir de ella."],
+["d","Escribe el comando para levantar todos los servicios de Compose en segundo plano.",["docker compose up -d","docker-compose up -d"],"docker compose up -d","-d (detached) deja los servicios corriendo sin ocupar la terminal."],
+["d","Escribe el comando de Compose para reconstruir las imágenes y levantar los servicios en segundo plano.",["docker compose up -d --build","docker-compose up -d --build","docker compose up --build -d"],"docker compose up -d --build","--build fuerza a recompilar la imagen aunque la versión no haya cambiado."],
+["d","Escribe el comando para detener (sin borrar) un contenedor llamado mi_db.",["docker stop mi_db"],"docker stop mi_db","stop lo detiene pero lo conserva; rm lo elimina."],
+["d","Escribe el comando para borrar un contenedor detenido llamado mi_db.",["docker rm mi_db"],"docker rm mi_db","Solo se puede borrar si está detenido; con -f se fuerza."],
+["d","Escribe el comando para forzar el borrado de un contenedor en ejecución llamado mi_db.",["docker rm -f mi_db","docker rm --force mi_db"],"docker rm -f mi_db","-f lo detiene y lo borra en un solo paso."],
+["d","Escribe el comando para borrar la imagen postgres:16-alpine.",["docker rmi postgres:16-alpine","docker image rm postgres:16-alpine"],"docker rmi postgres:16-alpine","rmi borra imágenes; rm borra contenedores."],
+["d","Escribe el comando para listar las imágenes descargadas.",["docker images","docker image ls"],"docker images","Muestra repositorio, tag y tamaño de cada imagen local."],
+["d","Escribe el comando para ver los logs en tiempo real del contenedor mi_db.",["docker logs -f mi_db","docker logs --follow mi_db"],"docker logs -f mi_db","-f sigue el log en vivo, como tail -f."],
+["d","Escribe el comando para construir la imagen mi_app:latest desde el Dockerfile de la carpeta actual.",["docker build -t mi_app:latest .","docker build --tag mi_app:latest ."],"docker build -t mi_app:latest .","-t le pone nombre y tag a la imagen; el punto final es el contexto de construcción."],
+["d","Escribe el comando para limpiar TODO lo que Docker no esté usando (imágenes incluidas).",["docker system prune -a","docker system prune --all"],"docker system prune -a","Libera contenedores detenidos, redes, caché e imágenes sin usar."],
+["d","Escribe solo la bandera de mapeo que publica el puerto 5433 del host hacia el 5432 del contenedor.",["-p 5433:5432","--publish 5433:5432"],"-p 5433:5432","Formato -p HOST:CONTENEDOR: el primero es de tu PC, el segundo el interno."],
+["d","Escribe la instrucción de un Dockerfile que define la imagen base.",["from","from <imagen>"],"FROM","Ej.: FROM node:20-alpine."],
+["o","Escribe la sigla (3 letras) del proceso que Extrae, Transforma y Carga los datos desde OLTP hacia el cubo.",["etl"],"ETL","Es el puente nocturno entre OLTP y OLAP."],
+["o","Escribe el nombre de la operación OLAP que fija UNA sola dimensión y produce una matriz 2D.",["slice","rebanar"],"Slice","Si se filtran varias dimensiones a la vez se llama Dice."],
+["o","Escribe el nombre de la operación OLAP que gira los ejes (filas por columnas).",["pivot","rotar"],"Pivot","Es como girar la mesa para ver otra perspectiva."],
+["o","Escribe el nombre de la técnica para conservar el historial de cambios en una dimensión creando una nueva fila (sigla y tipo).",["scd tipo 2","scd 2","scd2","scd tipo2","scd type 2"],"SCD Tipo 2","Slowly Changing Dimension Tipo 2: nueva fila con fechas de vigencia."],
+["m","Escribe el nombre del algoritmo de agrupamiento usado en el ejemplo de la tienda de videojuegos (K=3).",["k-means","kmeans","k means"],"K-Means","Agrupa por distancia matemática; MongoDB solo guarda el cluster_id."],
+["m","Escribe la etapa del Aggregation Pipeline que descompone un array en un documento por elemento.",["$unwind","unwind"],"$unwind","Se usa para separar items[] antes de agrupar las canastas con $group."],
+["m","Escribe la etapa del Aggregation Pipeline que agrupa documentos y calcula acumuladores como $sum.",["$group","group"],"$group","Ej.: gasto total por cliente con { $sum: \"$price\" }."],
+["m","Escribe el método de MongoDB que inserta UN documento en una colección.",["insertone","insertone()","db.transacciones.insertone"],"insertOne","Para varios documentos se usa insertMany."],
+["m","Escribe el nombre de la métrica de las reglas de asociación que indica qué tan frecuente es una combinación en el total de transacciones.",["soporte","support"],"Soporte","La Confianza, en cambio, es la probabilidad condicional."],
+["m","Escribe el nombre en inglés del fenómeno por el cual un modelo pierde precisión porque cambian los hábitos con el tiempo (dos palabras).",["model drift","modeldrift"],"Model Drift","Se corrige con reentrenamiento periódico con datos recientes."],
+["m","Escribe el término en inglés (dos palabras) para el modelo que memorizó el ruido de los datos de entrenamiento y falla con datos nuevos.",["overfitting","over fitting","sobreajuste"],"Overfitting","También se llama sobreajuste."]
+];
+// ---------- lógica ----------
+const $=id=>document.getElementById(id);
+const sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const sc=x=>$(x).classList;
+const norm=s=>s.toLowerCase().replace(/[“”«»]/g,'"').replace(/[‘’]/g,"'").replace(/`/g,"").replace(/\s+/g," ").trim().replace(/[.;]+$/,"");
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const ALL=[...Q.map(q=>({tema:q[0],q:q[1],raw:q[2],c:q[3],fb:q[4]})),...QT.map(q=>({tema:q[0],q:q[1],acc:q[2],ans:q[3],fb:q[4],typed:true}))];
+let L=[],i=0,last={topics:[]};
+const tp=$("topics");
+Object.keys(T).forEach(k=>{const a=ALL.filter(q=>q.tema==k),t=a.filter(q=>q.typed).length;tp.insertAdjacentHTML("beforeend",`<label class="tp"><input type="checkbox" value="${k}" checked><span><b>${T[k]}</b> <span class="mono">(${a.length} preguntas, ${t} de escribir)</span></span></label>`)});
+const sel=()=>[...tp.querySelectorAll("input:checked")].map(x=>x.value);
+function upd(){const n=ALL.filter(q=>sel().includes(q.tema)).length;$("cnt").textContent=n+" preguntas seleccionadas";$("go").disabled=$("goo").disabled=!n}
+tp.onchange=upd;upd();
+function screen(n){["home","quiz","stats"].forEach(x=>sc(x).toggle("hide",x!=n));sc("foot").toggle("hide",n=="home")}
+function start(topics,mix,only){
+ last={topics,mix};
+ let items=only||ALL.filter(q=>topics.includes(q.tema));
+ if(mix)items=sh(items);
+ L=items.map(x=>x.typed?{...x,val:"",done:false,ok:false}:{...x,o:sh(x.raw.map((t,k)=>({t,c:k==x.c}))),pick:null,done:false});
+ i=0;screen("quiz");show()}
+$("go").onclick=()=>start(sel(),true);$("goo").onclick=()=>start(sel(),false);
+const good=x=>x.done&&(x.typed?x.ok:x.o[x.pick].c);
+const rightOf=x=>x.typed?x.ans:x.o.find(o=>o.c).t;
+function show(){
+ const x=L[i],n=L.filter(good).length;
+ $("pos").textContent=`Pregunta ${i+1} de ${L.length}`;$("okc").textContent=`${n} correctas`;
+ $("tag").textContent=T[x.tema]+(x.typed?" · escribe la respuesta":"");$("q").textContent=x.q;
+ const box=$("opts");box.innerHTML="";
+ if(x.typed){
+  const inp=document.createElement("input");inp.className="inp"+(x.done?(x.ok?" ok":" no"):"");inp.placeholder="Escribe aquí tu respuesta…";
+  inp.value=x.val;inp.readOnly=x.done;inp.autocomplete="off";inp.spellcheck=false;
+  inp.oninput=()=>{x.val=inp.value;$("conf").disabled=!inp.value.trim()};
+  inp.onkeydown=e=>{if(e.key=="Enter"&&!x.done&&inp.value.trim())confirmar()};
+  box.appendChild(inp);if(!x.done)setTimeout(()=>inp.focus(),0);
+ }else x.o.forEach((op,k)=>{const b=document.createElement("button");b.className="opt";b.innerHTML='<span class="r"></span>';b.append(op.t);
+  if(x.done){b.disabled=true;if(op.c)b.classList.add("ok");else if(k==x.pick)b.classList.add("no")}
+  else{if(k==x.pick)b.classList.add("sel");b.onclick=()=>{x.pick=k;show()}}
+  box.appendChild(b)});
+ const ok=good(x);
+ $("fb").innerHTML=x.done?`<div class="fb ${ok?"ok":"no"}"><b>${ok?"¡Correcto!":"Incorrecto."}</b>${ok?"":" Respuesta correcta: <i>"+esc(rightOf(x))+"</i>"}<p>${x.fb}</p></div>`:"";
+ $("conf").classList.toggle("hide",x.done);$("conf").disabled=x.typed?!x.val.trim():x.pick===null;
+ $("prev").disabled=i==0;$("next").disabled=!x.done;$("next").textContent=i==L.length-1?"Ver resultados":"Siguiente"}
+function confirmar(){const x=L[i];if(x.typed)x.ok=x.acc.map(norm).includes(norm(x.val));x.done=true;show()}
+$("conf").onclick=confirmar;
+$("prev").onclick=()=>{i--;show()};
+$("next").onclick=()=>{if(i<L.length-1){i++;show()}else stats(true)};
+function stats(fin){
+ const d=L.filter(x=>x.done),ok=d.filter(good).length,bad=d.length-ok,pend=L.length-d.length,pc=d.length?Math.round(ok/d.length*100):0;
+ const tt=d.filter(x=>x.typed),to=tt.filter(good).length,mc=d.filter(x=>!x.typed),mo=mc.filter(good).length;
+ const por=Object.keys(T).filter(k=>L.some(x=>x.tema==k)).map(k=>{const a=L.filter(x=>x.tema==k&&x.done),g=a.filter(good).length,p=a.length?Math.round(g/a.length*100):0;
+  return `<div class="tr"><span>${T[k]}</span><span>${g}/${a.length} · ${p}%</span></div><div class="bar"><i style="width:${p}%"></i></div>`}).join("");
+ const fails=d.filter(x=>!good(x));
+ const msg=!d.length?"Aún no has respondido nada.":pc>=90?"¡Excelente dominio!":pc>=70?"¡Muy bien! Repasa lo que fallaste.":pc>=50?"Vas bien, sigue practicando.":"Toca repasar un poco más, ¡tú puedes!";
+ $("stats").innerHTML=`<div class="mono">${fin?"RESULTADO FINAL":"PUNTUACIÓN ACTUAL"}</div><hr>
+ <div style="text-align:center"><div class="big">${ok} / ${d.length}</div><div class="mono">${pc}% de aciertos · ${msg}</div></div>
+ <div class="st"><div><b style="color:var(--ok)">${ok}</b>Buenas</div><div><b style="color:var(--no)">${bad}</b>Malas</div><div><b>${pend}</b>Sin responder</div></div>
+ <p class="mono">POR TIPO</p><div class="tr"><span>Opción múltiple</span><span>${mo}/${mc.length}</span></div><div class="tr"><span>Escritas (comandos y términos)</span><span>${to}/${tt.length}</span></div>
+ <p class="mono">POR TEMA</p>${por}
+ ${fails.length?`<p class="mono">PREGUNTAS FALLADAS (${fails.length})</p>`+fails.map(x=>`<div class="rv">${esc(x.q)}<br>${x.typed?`<small>Tu respuesta: ${esc(x.val)}</small><br>`:""}<span>✔ ${esc(rightOf(x))}</span></div>`).join(""):(d.length?'<p class="mono">¡Sin errores! 🎉</p>':"")}
+ <div class="row">${fin?"":'<button class="bt" id="back">Volver al cuestionario</button>'}${fails.length?'<button class="bt" id="rep">Repetir solo las falladas</button>':""}</div>`;
+ screen("stats");
+ if($("back"))$("back").onclick=()=>{screen("quiz");show()};
+ if($("rep"))$("rep").onclick=()=>start(last.topics,true,fails.map(x=>{const{o,pick,val,ok,done,...r}=x;return r}))}
+$("bo").onclick=()=>start(last.topics,false);$("bm").onclick=()=>start(last.topics,true);
+$("bs").onclick=()=>stats(false);$("bh").onclick=()=>screen("home");
+</script></body></html>
